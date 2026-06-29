@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# venv
+.venv/
+venv/
+env/
+ENV/
+
+# секреты и локальное окружение
+.env
+*.pem
+*.key
+
+# личные деплой-скрипты (содержат IP/host key конкретного сервера)
+deploy.ps1
+deploy*.local.*
+
+# IDE / агент
+.claude/
+
+# артефакты приложения
+zhelpra_jobs/
+*.log
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

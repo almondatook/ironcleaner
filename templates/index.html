@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧺 Железная Прачка — стирает водяные знаки с PDF</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="/static/favicon-32.png">
+<link rel="apple-touch-icon" href="/static/apple-touch-icon.png">
+
+<!-- Open Graph (Facebook, Telegram, ВКонтакте, LinkedIn, WhatsApp, Slack…) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Железная Прачка">
+<meta property="og:title" content="Железная Прачка">
+<meta property="og:description" content="Стирает водяные знаки, колонтитулы и техномусор с книжных PDF. На выходе — чистый текст для перевода.">
+<meta property="og:url" content="https://prachka.makarina.pro/">
+<meta property="og:image" content="https://prachka.makarina.pro/static/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Железная Прачка — стирает водяные знаки с PDF">
+<meta property="og:locale" content="ru_RU">
+
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Железная Прачка">
+<meta name="twitter:description" content="Стирает водяные знаки, колонтитулы и техномусор с книжных PDF. На выходе — чистый текст для перевода.">
+<meta name="twitter:image" content="https://prachka.makarina.pro/static/og.png">
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@900&display=swap');
+
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Mono', monospace;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #000;
+    background: #f5f5dc;
+    background-image:
+      repeating-linear-gradient(0deg, transparent, transparent 50px, rgba(0,0,0,.03) 50px, rgba(0,0,0,.03) 51px),
+      repeating-linear-gradient(90deg, transparent, transparent 50px, rgba(0,0,0,.03) 50px, rgba(0,0,0,.03) 51px);
+  }
+
+  /* ---- HEADER ---- */
+  .header {
+    margin-bottom: 30px;
+    padding: 24px;
+    background: #000;
+    color: #fff;
+    border: 4px solid #000;
+    box-shadow: 8px 8px 0 #00bcd4;
+    transform: rotate(-1deg);
+    text-align: center;
+  }
+  .header .logo { width: 76px; height: 76px; display: block; margin: 0 auto; }
+  .header h1 {
+    margin: 6px 0 0;
+    font-family: 'Inter', sans-serif;
+    font-size: 2.4em;
+    font-weight: 900;
+    letter-spacing: -2px;
+    text-transform: uppercase;
+  }
+  .header .subtitle {
+    color: #00e5ff;
+    margin-top: 4px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+  }
+  /* ---- ABOUT (секция-описание) ---- */
+  .about .lead {
+    font-family: 'Inter', sans-serif; font-weight: 900; text-transform: uppercase;
+    font-size: 1.4em; letter-spacing: -1px; margin: 0 0 2px;
+  }
+  .about .sub { font-size: 14px; margin: 0 0 16px; color: #333; }
+  .about .items { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+  .about .item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 12px 16px; border: 3px solid #000; font-size: 14px; line-height: 1.4;
+  }
+  .about .item.i1 { background: #ffe3ec; }
+  .about .item.i2 { background: #d6ffe7; }
+  .about .item.i3 { background: #fff8c4; }
+  .about .tail { font-size: 14px; margin: 10px 0 0; }
+  .about .tail.out { font-weight: 700; }
+  .about .tag-demo { background: #ffff00; color: #000; padding: 1px 6px; font-weight: 700; }
+  /* крупные цветные повёрнутые квадратики-маркеры */
+  .num {
+    display: inline-block; flex-shrink: 0;
+    width: 32px; height: 32px; line-height: 27px; text-align: center;
+    font-family: 'Inter', sans-serif; font-weight: 900; font-size: 17px;
+    color: #000; border: 3px solid #000;
+  }
+  .num1 { background: #ff3366; color: #fff; transform: rotate(-8deg); }
+  .num2 { background: #00ff88; transform: rotate(6deg); }
+  .num3 { background: #ffff00; transform: rotate(-5deg); }
+
+  /* ---- CARDS ---- */
+  .card {
+    background: #fff;
+    padding: 22px;
+    margin-bottom: 22px;
+    border: 4px solid #000;
+    box-shadow: 6px 6px 0 #000;
+  }
+  .card h2 {
+    margin: 0 0 16px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 1.25em;
+    border-bottom: 4px solid #000;
+    padding-bottom: 10px;
+  }
+  .hidden { display: none !important; }
+
+  /* ---- DROP ZONE ---- */
+  .drop-zone {
+    border: 4px dashed #000;
+    padding: 36px;
+    text-align: center;
+    cursor: pointer;
+    background: #fff;
+    transition: all .1s;
+  }
+  .drop-zone:hover { background: #ffff00; transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #000; }
+  .drop-zone.dragging { background: #00ffcc; transform: translate(-2px,-2px); box-shadow: 6px 6px 0 #000; }
+  .drop-zone .big { font-size: 3em; }
+  .drop-zone .fname { margin-top: 8px; font-weight: 700; color: #ff3366; font-size: 1.1em; }
+
+  /* ---- FIELDS ---- */
+  label.fld { display: block; font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; margin-bottom: 6px; }
+  label.fld .opt { color: #666; font-weight: 400; text-transform: none; letter-spacing: 0; }
+  input[type=text] {
+    width: 100%; padding: 12px; border: 3px solid #000; font-size: 14px;
+    font-family: 'Space Mono', monospace; background: #fff; transition: all .1s;
+  }
+  input[type=text]:focus { outline: none; box-shadow: 4px 4px 0 #ff3366; transform: translate(-2px,-2px); }
+
+  /* ---- BUTTONS ---- */
+  button, .btn-link {
+    font-family: 'Space Mono', monospace; font-weight: 700; text-transform: uppercase;
+    border: 4px solid #000; cursor: pointer; transition: all .1s; font-size: 15px;
+  }
+  button.primary { padding: 14px 34px; background: #ff3366; color: #fff; box-shadow: 6px 6px 0 #000; }
+  button.primary:hover:not(:disabled) { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 #000; }
+  button.primary:active:not(:disabled) { transform: translate(0,0); box-shadow: 3px 3px 0 #000; }
+  button.primary:disabled { background: #ccc; cursor: not-allowed; box-shadow: none; }
+  a.download {
+    display: inline-block; padding: 14px 30px; background: #00ff88; color: #000;
+    text-decoration: none; border: 4px solid #000; box-shadow: 6px 6px 0 #000;
+    font-family: 'Space Mono', monospace; font-weight: 700; text-transform: uppercase; font-size: 15px;
+    transition: all .1s;
+  }
+  a.download:hover { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 #000; }
+  a.download.csv { background: #fff; }
+  .btn-link { border: none; background: none; padding: 10px; text-decoration: underline; }
+
+  .spinner {
+    width: 22px; height: 22px; display: inline-block; vertical-align: middle;
+    border: 3px solid #000; border-top-color: #ff3366; border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ---- STRATEGY CARDS ---- */
+  .strategy-card {
+    border: 3px solid #000; padding: 14px; margin-bottom: 12px; background: #fff;
+    cursor: pointer; transition: all .1s; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .strategy-card:hover { transform: translate(-2px,-2px); box-shadow: 4px 4px 0 #000; }
+  .strategy-card.selected { background: #fffbcc; box-shadow: 5px 5px 0 #ff3366; transform: translate(-2px,-2px); }
+  .strategy-card .chk { font-size: 20px; line-height: 1; flex-shrink: 0; }
+  .strategy-card .title { font-weight: 700; }
+  .strategy-card .desc { font-size: 13px; color: #333; margin-top: 4px; line-height: 1.5; }
+  .badge { display: inline-block; font-size: 11px; padding: 2px 7px; border: 2px solid #000; text-transform: uppercase; font-weight: 700; margin-left: 4px; }
+  .badge.type { background: #e0e0e0; }
+  .badge.rec { background: #00bcd4; color: #000; }
+  .conf-high { background: #00ff88; }
+  .conf-medium { background: #ffff00; }
+  .conf-low { background: #ff5577; color: #fff; }
+  .thumb { width: 84px; height: 112px; object-fit: contain; border: 3px solid #000; background: #f5f5dc; flex-shrink: 0; }
+
+  #noStrategies { border: 4px solid #000; background: #fff3cd; padding: 16px; font-size: 14px; }
+
+  /* ---- RESULT ---- */
+  .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  .preview-grid .cap { font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; margin-bottom: 6px; }
+  .preview-img { width: 100%; border: 3px solid #000; background: #fff; }
+  @media (max-width: 640px) { .preview-grid { grid-template-columns: 1fr; } }
+
+  #errorBox { border: 4px solid #000; padding: 16px; margin-bottom: 22px; font-size: 14px; box-shadow: 6px 6px 0 #000; }
+  #errorBox.err { background: #ff5577; color: #fff; }
+  #errorBox.warn { background: #ffff00; color: #000; }
+
+  footer { text-align: center; font-size: 11px; color: #666; margin-top: 30px; text-transform: uppercase; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+  <header class="header">
+    <img src="/static/basket.png" class="logo" alt="Железная Прачка">
+
+    <h1>Железная Прачка</h1>
+    <div class="subtitle">Водяные знаки • Колонтитулы • Иллюстрации</div>
+  </header>
+
+  <!-- ОПИСАНИЕ -->
+  <section class="card about">
+    <p class="lead">Большая стирка для книжных PDF</p>
+    <p class="sub">Отстирывает почти все:</p>
+    <div class="items">
+      <div class="item i1"><span class="num num1">1</span><span>любые водяные знаки — растровые, текстовые, InDesign'овые, векторные, аннотации</span></div>
+      <div class="item i2"><span class="num num2">2</span><span>колонтитулы с номерами страниц и прочей грязью</span></div>
+      <div class="item i3"><span class="num num3">3</span><span>всяческий техномусор верстки</span></div>
+    </div>
+    <p class="tail">Если попросить, приклеивает бирки к иллюстрациям: <span class="tag-demo">&lt;иллюстрация на листе n&gt;</span> — чтобы не потерялись при конвертации.</p>
+    <p class="tail out">На выходе — чистый текст, готовый к любой обработке.</p>
+  </section>
+
+  <!-- ШАГ 1 -->
+  <section id="step-upload" class="card">
+    <h2>1 · Загрузить файл</h2>
+    <div id="dropZone" class="drop-zone">
+      <div id="dropPrompt">
+        <div class="big">📄</div>
+        <div>Перетащи PDF сюда или нажми, чтобы выбрать</div>
+        <div style="font-size:12px;color:#666;margin-top:4px;">До 300 МБ</div>
+      </div>
+      <div id="dropFile" class="hidden">
+        <div class="big">✓</div>
+        <div class="fname" id="dropFileName"></div>
+        <div style="font-size:12px;color:#666;" id="dropFileSize"></div>
+      </div>
+      <input type="file" id="fileInput" accept="application/pdf" class="hidden">
+    </div>
+    <div style="margin-top:18px;">
+      <label class="fld">Текст водяного знака <span class="opt">(необязательно — апп и сам поищет; впиши, если знаешь и хочешь прицельно)</span></label>
+      <input type="text" id="watermarkText" placeholder="например: name@example.com">
+    </div>
+    <div style="margin-top:18px;">
+      <button class="primary" id="diagnoseBtn" disabled>Проверить файл</button>
+      <span id="diagnoseStatus" class="hidden" style="margin-left:14px;">
+        <span class="spinner"></span> <span id="diagnoseStatusText">анализирую…</span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ШАГ 2 -->
+  <section id="step-diagnose" class="card hidden">
+    <h2>2 · Что нашлось</h2>
+    <div id="reportSummary" style="font-size:13px;color:#333;margin-bottom:16px;"></div>
+    <div id="strategiesList"></div>
+    <div id="noStrategies" class="hidden">
+      <strong>Ничего подозрительного не нашлось.</strong>
+      Если уверена, что водяной знак есть — впиши его текст в поле выше и проверь заново. Если он векторный/нестандартный — кидай файл вручную.
+    </div>
+    <div style="margin-top:20px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;">
+      <button class="primary" id="cleanBtn" disabled>Постирать</button>
+      <button class="btn-link" id="restartBtn">← Начать сначала</button>
+      <span id="cleanStatus" class="hidden">
+        <span class="spinner"></span> <span>работаю…</span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ШАГ 3 -->
+  <section id="step-result" class="card hidden">
+    <h2>3 · Готово</h2>
+    <div id="resultSummary" style="font-weight:700;color:#0a8f4a;margin-bottom:16px;"></div>
+    <div class="preview-grid">
+      <div>
+        <div class="cap">До</div>
+        <img id="previewOrig" class="preview-img" alt="оригинал">
+      </div>
+      <div>
+        <div class="cap">После</div>
+        <img id="previewClean" class="preview-img" alt="чистый">
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;">
+      <a id="downloadLink" href="#" download class="download">⬇ Скачать чистый PDF</a>
+      <a id="downloadCsvLink" href="#" download class="download csv hidden">⬇ Скачать CSV иллюстраций</a>
+      <button class="btn-link" onclick="window.location.reload()">Обработать ещё файл</button>
+    </div>
+  </section>
+
+  <div id="errorBox" class="hidden"></div>
+
+  <footer>Сделано для редакции · PyMuPDF + Flask · Файлы удаляются автоматически через час</footer>
+
+<script>
+let currentJobId = null, currentReport = null, selectedIndices = new Set();
+const TYPE_BADGES = {
+  image: 'растровый', form_xobject: 'InDesign', artifact: 'текстовый',
+  annotation: 'аннотация', text: 'текстовый', placeholder: 'замена меток', vector: 'векторный',
+  illustration: 'иллюстрации', headers: 'колонтитулы'
+};
+const STEP_LABEL = {
+  image: 'растровый знак', form_xobject: 'InDesign-объекты', artifact: 'текстовый знак',
+  annotation: 'аннотации', text: 'текстовый знак', placeholder: 'заглушки',
+  illustration: 'иллюстрации', headers: 'колонтитулы'
+};
+
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const diagnoseBtn = document.getElementById('diagnoseBtn');
+
+async function readJson(resp) {
+  const ct = resp.headers.get('content-type') || '';
+  if (ct.includes('application/json')) { try { return await resp.json(); } catch { return {}; } }
+  const txt = await resp.text().catch(() => '');
+  return { error: txt };
+}
+function describeHttpError(resp, data) {
+  if (resp.status === 413) return { message: 'Файл больше 300 МБ — столько Прачка за раз не берёт. Разбей на части.' };
+  if (resp.status === 404) return { message: 'Сервер перезапустился или вышел срок хранения (час). Просто загрузи файл заново.', lost: true };
+  return { message: (data && data.error) || `Ошибка сервера (${resp.status})`, encrypted: data && data.encrypted };
+}
+
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => e.preventDefault());
+
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragging'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragging'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('dragging');
+  if (e.dataTransfer.files.length) { fileInput.files = e.dataTransfer.files; onFileSelected(); }
+});
+fileInput.addEventListener('change', onFileSelected);
+
+function onFileSelected() {
+  const f = fileInput.files[0]; if (!f) return;
+  if (!f.name.toLowerCase().endsWith('.pdf')) { showError('Это не PDF. Только PDF.'); return; }
+  if (f.size > 300 * 1024 * 1024) { showError('Файл больше 300 МБ — столько Прачка за раз не берёт. Разбей на части.'); return; }
+  document.getElementById('dropPrompt').classList.add('hidden');
+  document.getElementById('dropFile').classList.remove('hidden');
+  document.getElementById('dropFileName').textContent = f.name;
+  document.getElementById('dropFileSize').textContent = (f.size/1024/1024).toFixed(1) + ' МБ';
+  diagnoseBtn.disabled = false; hideError();
+}
+
+diagnoseBtn.addEventListener('click', async () => {
+  const f = fileInput.files[0]; if (!f) return;
+  const fd = new FormData();
+  fd.append('file', f);
+  fd.append('watermark_text', document.getElementById('watermarkText').value);
+  diagnoseBtn.disabled = true; showStatus('diagnoseStatus', 'загружаю…'); hideError();
+  try {
+    const resp = await fetch('/diagnose', { method: 'POST', body: fd });
+    const data = await readJson(resp);
+    if (!resp.ok) throw describeHttpError(resp, data);
+    currentJobId = data.job_id; currentReport = data.report;
+    renderReport(data.report);
+    document.getElementById('step-diagnose').classList.remove('hidden');
+    document.getElementById('step-diagnose').scrollIntoView({ behavior: 'smooth' });
+  } catch (e) {
+    showError(e.message || 'Сеть недоступна — проверь соединение и попробуй ещё раз.', e.encrypted, e.lost);
+  } finally { hideStatus('diagnoseStatus'); diagnoseBtn.disabled = false; }
+});
+
+function renderReport(report) {
+  document.getElementById('reportSummary').textContent =
+    `Файл на ${report.total_pages} страниц. Проверено первые ${report.pages_sampled}. Отметь одну или несколько проблем — решу за один проход.`;
+  const list = document.getElementById('strategiesList');
+  list.innerHTML = ''; selectedIndices.clear();
+  document.getElementById('cleanBtn').disabled = true;
+
+  if (!report.strategies || !report.strategies.length) {
+    document.getElementById('noStrategies').classList.remove('hidden'); return;
+  }
+  document.getElementById('noStrategies').classList.add('hidden');
+
+  const confLabels = { high: 'высокая уверенность', medium: 'средняя уверенность', low: 'низкая уверенность' };
+
+  report.strategies.forEach((s, idx) => {
+    const card = document.createElement('div');
+    card.className = 'strategy-card';
+    if (s.manual_only) { card.style.opacity = '0.55'; card.style.cursor = 'not-allowed'; }
+
+    let thumb = '';
+    if (s.type === 'image' && s.params.xref)
+      thumb = `<img src="/thumb/${currentJobId}/${s.params.xref}" class="thumb">`;
+
+    const chk = s.manual_only ? '' : `<span class="chk">☐</span>`;
+
+    card.innerHTML = `
+      ${chk}
+      <div style="flex-grow:1;">
+        <div>
+          <span class="title">${s.title}</span>
+          <span class="badge type">${TYPE_BADGES[s.type]||s.type}</span>
+          <span class="badge conf-${s.confidence}">${confLabels[s.confidence]}</span>
+          ${idx === report.recommended_index ? '<span class="badge rec">рекомендую</span>' : ''}
+        </div>
+        <div class="desc">${s.description}</div>
+        ${s.manual_only ? '<div style="font-size:12px;color:#c00;margin-top:6px;">⚠ Автоматически не снимаю. Скинь файл руками.</div>' : ''}
+      </div>
+      ${thumb}`;
+    if (!s.manual_only) card.addEventListener('click', () => toggleStrategy(idx));
+    list.appendChild(card);
+  });
+
+  if (report.recommended_index != null) toggleStrategy(report.recommended_index);
+}
+
+function toggleStrategy(idx) {
+  if (selectedIndices.has(idx)) selectedIndices.delete(idx);
+  else selectedIndices.add(idx);
+  document.querySelectorAll('.strategy-card').forEach((c, i) => {
+    const on = selectedIndices.has(i);
+    c.classList.toggle('selected', on);
+    const chk = c.querySelector('.chk');
+    if (chk) chk.textContent = on ? '☑' : '☐';
+  });
+  const btn = document.getElementById('cleanBtn');
+  const k = selectedIndices.size;
+  btn.disabled = k === 0;
+  btn.textContent = k === 0 ? 'Постирать' : k === 1 ? '⚡ Постирать выбранное' : `⚡ Постирать выбранное (${k})`;
+}
+
+document.getElementById('cleanBtn').addEventListener('click', async () => {
+  if (selectedIndices.size === 0) return;
+  const chosen = [...selectedIndices].map(i => currentReport.strategies[i]);
+  const strategies = chosen.map(s => ({ strategy: s.type, params: s.params }));
+  showStatus('cleanStatus', strategies.length > 1 ? 'стираю (несколько)…' : 'стираю…');
+  document.getElementById('cleanBtn').disabled = true; hideError();
+  try {
+    const resp = await fetch('/clean', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ job_id: currentJobId, strategies }),
+    });
+    const data = await readJson(resp);
+    if (!resp.ok) throw describeHttpError(resp, data);
+
+    const steps = data.steps || [];
+    let msg = '✓ Готово. ';
+    if (steps.length === 1) {
+      const st = steps[0], n = st.removed;
+      if (st.strategy === 'image') msg += 'Растровый водяной знак стёрт со всех страниц.';
+      else if (st.strategy === 'form_xobject') msg += `Обнулено объектов: ${n}.`;
+      else if (st.strategy === 'artifact') msg += `Вырезано вхождений: ${n}.`;
+      else if (st.strategy === 'annotation') msg += `Снято аннотаций: ${n}.`;
+      else if (st.strategy === 'text') msg += `Убрано вхождений: ${n}.`;
+      else if (st.strategy === 'placeholder') msg += `Заменено меток: ${n}.`;
+      else if (st.strategy === 'illustration') msg += `Помечено иллюстраций: ${n}.`;
+      else if (st.strategy === 'headers') msg += `Удалено колонтитулов/повторов: ${n}.`;
+    } else {
+      msg += 'Применено — ' + steps.map(st => `${STEP_LABEL[st.strategy] || st.strategy}: ${st.removed || 0}`).join('; ') + '.';
+    }
+    msg += ' Обязательно сверь превью.';
+    document.getElementById('resultSummary').textContent = msg;
+
+    const sp = (chosen[0] && chosen[0].sample_page) || 0;
+    ['previewOrig', 'previewClean'].forEach(id => {
+      const img = document.getElementById(id);
+      img.onerror = () => { img.removeAttribute('src'); img.alt = 'страница не отрисовалась'; };
+    });
+    document.getElementById('previewOrig').src = `/preview/${currentJobId}/original?page=${sp}&_=${Date.now()}`;
+    document.getElementById('previewClean').src = `/preview/${currentJobId}/clean?page=${sp}&_=${Date.now()}`;
+    document.getElementById('downloadLink').href = `/download/${currentJobId}`;
+
+    const csv = document.getElementById('downloadCsvLink');
+    if (chosen.some(s => s.type === 'placeholder' || s.type === 'illustration')) {
+      csv.href = `/download_csv/${currentJobId}`; csv.classList.remove('hidden');
+    } else csv.classList.add('hidden');
+
+    document.getElementById('step-result').classList.remove('hidden');
+    document.getElementById('step-result').scrollIntoView({ behavior: 'smooth' });
+  } catch (e) {
+    showError(e.message || 'Сеть недоступна — проверь соединение и попробуй ещё раз.', e.encrypted, e.lost);
+  } finally { hideStatus('cleanStatus'); document.getElementById('cleanBtn').disabled = false; }
+});
+
+document.getElementById('restartBtn').addEventListener('click', () => window.location.reload());
+
+function showStatus(id, t) { const el = document.getElementById(id); el.classList.remove('hidden'); if (t) el.querySelector('span:last-child').textContent = t; }
+function hideStatus(id) { document.getElementById(id).classList.add('hidden'); }
+function showError(msg, encrypted, lost) {
+  const e = document.getElementById('errorBox');
+  if (encrypted) { e.className = 'warn'; e.innerHTML = '🔒 <strong>Файл зашифрован.</strong> ' + msg; }
+  else if (lost) { e.className = 'warn'; e.innerHTML = '⏳ <strong>Задача потерялась.</strong> ' + msg; }
+  else { e.className = 'err'; e.textContent = msg; }
+  e.classList.remove('hidden');
+  e.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function hideError() { document.getElementById('errorBox').classList.add('hidden'); }
+</script>
+</body>
+</html>
