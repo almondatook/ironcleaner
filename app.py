@@ -24,6 +24,12 @@ app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 300 * 1024 * 1024  # 300 MB
 
 
+@app.route('/healthz')
+def healthz():
+    # healthcheck для Railway (см. railway.toml)
+    return 'ok'
+
+
 # Карта стратегий -> функция cleaner. Имена совпадают с функциями в cleaner.py.
 _CLEAN_FUNCS = {
     'image': 'clean_image_watermark',

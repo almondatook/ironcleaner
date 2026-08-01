@@ -1,0 +1,11 @@
+# Конфиг Railway. Сборка — по Dockerfile в корне (Railway найдёт его сам,
+# но пропишем явно). Healthcheck ходит на /healthz — этот путь открыт без
+# Basic Auth, иначе с включённым паролем деплой считался бы упавшим (401).
+
+[build]
+builder = "dockerfile"
+
+[deploy]
+healthcheckPath = "/healthz"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5

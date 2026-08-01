@@ -1,0 +1,27 @@
+# В образ едет только код приложения.
+.git
+.gitignore
+.gitattributes
+.claude
+__pycache__
+*.py[cod]
+venv
+.venv
+env
+ENV
+.env
+*.pem
+*.key
+deploy.sh
+deploy.ps1
+deploy*.local.*
+zhelpra_jobs
+*.log
+README.md
+Dockerfile
+.dockerignore
+railway.toml
+.DS_Store
+Thumbs.db
+.vscode
+.idea
