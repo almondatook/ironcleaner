@@ -73,7 +73,7 @@ gunicorn слушает `$PORT`) и `railway.toml` (healthcheck на `/healthz`,
 - **Авторизации нет**: приложение открыто любому, у кого есть URL. Если нужен
   пароль — повесь его на уровне прокси/хостинга (на VPS это делает nginx,
   см. ниже) или не публикуй ссылку.
-- **Файсистема эфемерная**: загруженные PDF живут в `/tmp` контейнера и
+- **Файловая система эфемерная**: загруженные PDF живут в `/tmp` контейнера и
   пропадают при редеплое. Для Прачки это норма — задачи и так удаляются через
   час, ничего ценного на диске нет. Volume не нужен.
 - **Один воркер** (`-w 1` в Dockerfile) — по тем же причинам, что и на VPS:
@@ -196,6 +196,9 @@ prachka/
 ├── fitz_worker.py      # изоляция вызовов PyMuPDF в отдельный процесс (защита от segfault)
 ├── jobstore.py         # durable-задачи на диске
 ├── requirements.txt
+├── Dockerfile          # контейнер для Railway (python-slim + fonts-dejavu-core)
+├── railway.toml        # настройки Railway: healthcheck, рестарты
+├── .dockerignore
 ├── static/             # логотип, favicon, og:image
 ├── templates/
 │   └── index.html      # одностраничный фронт
@@ -213,6 +216,7 @@ prachka/
 | GET | `/thumb/<job>/<xref>` | эскиз картинки-кандидата |
 | GET | `/download/<job>` | чистый PDF |
 | GET | `/download_csv/<job>` | CSV иллюстраций (после placeholder/illustration) |
+| GET | `/healthz` | healthcheck для хостинга (Railway) |
 
 ## Хранение и приватность
 

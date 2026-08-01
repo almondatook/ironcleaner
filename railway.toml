@@ -1,11 +1,11 @@
 # Конфиг Railway. Сборка — по Dockerfile в корне (Railway найдёт его сам,
-# но пропишем явно). Healthcheck ходит на /healthz — этот путь открыт без
-# Basic Auth, иначе с включённым паролем деплой считался бы упавшим (401).
+# но пропишем явно). Значения enum строго капсом — так требует схема Railway.
+# Healthcheck ходит на /healthz (лёгкий эндпоинт без обработки PDF).
 
 [build]
-builder = "dockerfile"
+builder = "DOCKERFILE"
 
 [deploy]
 healthcheckPath = "/healthz"
-restartPolicyType = "on_failure"
+restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 5
